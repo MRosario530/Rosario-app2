@@ -6,13 +6,15 @@ package baseline;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Inventory {
-    private List<Item> currentInventory;
+    private final List<Item> currentInventory;
 
     public Inventory() {
         // Create an Inventory object.
+        currentInventory = new ArrayList<>();
     }
 
     public List<Item> getCurrentInventory() {
@@ -22,23 +24,33 @@ public class Inventory {
 
     public void addItem(String itemName, BigDecimal value, String serialNumber) {
         // Create an Item object using the three parameters above.
+        Item newItem = new Item(itemName,value,serialNumber);
         // Add the item to the currentInventory.
+        currentInventory.add(newItem);
     }
 
     public void editItem(Item itemToEdit, String itemName, BigDecimal value, String serialNumber) {
         // Get the item given from the list.
+        int itemIndex = currentInventory.indexOf(itemToEdit);
         // If an input is blank, do not change the corresponding instance variable.
+
         // If an input is invalid (itemName length not between 2 and 256, value < 0 or serialNumber in incorrect format)
         // do not update anything.
         // Otherwise update the non blank valid parameters in the given itemToEdit.
     }
 
-    public void deleteItem(Item selectedItem) {
-        // Delete the item in the parameter from the currentInventory list.
+    public void deleteItems(List<Item> selectedItems) {
+        // Delete the items in the parameter from the currentInventory list.
+        for (Item item: selectedItems) {
+            currentInventory.remove(item);
+        }
     }
 
     public void clearList() {
         // Call the list's clear method.
+        if (!currentInventory.isEmpty()) {
+            currentInventory.clear();
+        }
     }
 
     public void saveAsHTML(File file) {

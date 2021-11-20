@@ -79,7 +79,7 @@
       <TableView fx:id="inventoryTableview" prefWidth="460.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="nameColumn" minWidth="-Infinity" prefWidth="-1.0" text="Item Name" />
-          <TableColumn fx:id="valueColumn" minWidth="-Infinity" prefWidth="-1.0" text="Monetary Value" />
+          <TableColumn fx:id="valueColumn" minWidth="-Infinity" prefWidth="-1.0" text="Monetary Value ($)" />
             <TableColumn fx:id="serialNumColumn" minWidth="-Infinity" prefWidth="-1.0" text="Serial Number" />
         </columns>
          <columnResizePolicy>
@@ -90,7 +90,7 @@
    <left>
       <VBox prefHeight="408.0" prefWidth="200.0" spacing="30.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="inventoryInputLabel" prefHeight="42.0" prefWidth="137.0" text="Add to Inventory" textAlignment="CENTER">
+            <Label fx:id="inputTitleLabel" prefHeight="42.0" prefWidth="137.0" text="Add to Inventory" textAlignment="CENTER">
                <font>
                   <Font size="18.0" />
                </font>
@@ -98,12 +98,12 @@
                   <Insets left="30.0" />
                </VBox.margin>
             </Label>
-            <Label text="Item Name">
+            <Label fx:id="itemNameLabel" text="Item Name">
                <VBox.margin>
                   <Insets bottom="-20.0" left="10.0" />
                </VBox.margin>
             </Label>
-            <TextArea fx:id="nameInputBox" maxWidth="180.0" minWidth="180.0" prefHeight="96.0" prefWidth="180.0" promptText="Enter item name between 2 and 256 characters">
+            <TextArea fx:id="nameInputBox" maxWidth="180.0" minWidth="180.0" prefHeight="96.0" prefWidth="180.0" promptText="Enter item name between 2 and 256 characters" wrapText="true">
                <VBox.margin>
                   <Insets left="10.0" />
                </VBox.margin>
@@ -113,22 +113,22 @@
                   <Insets bottom="-20.0" left="10.0" top="-30.0" />
                </VBox.margin>
             </Label>
-            <Label text="Serial Number">
+            <Label fx:id="serialNumberLabel" text="Serial Number">
                <VBox.margin>
                   <Insets bottom="-20.0" left="10.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="serialInputBox" maxWidth="180.0" promptText="A-XXX-XXX-XXX">
+            <TextField fx:id="serialInputBox" maxWidth="180.0" promptText="Format: A-XXX-XXX-XXX">
                <VBox.margin>
                   <Insets left="10.0" />
                </VBox.margin>
             </TextField>
-            <Label text="Item Value">
+            <Label fx:id="monetaryValueLabel" text="Monetary Value">
                <VBox.margin>
-                  <Insets left="10.0" />
+                  <Insets left="10.0" top="-20.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="valueInputBox" maxWidth="180.0" promptText="\$0.00">
+            <TextField fx:id="valueInputBox" maxWidth="180.0" promptText="Format (no $ needed): 0.00">
                <VBox.margin>
                   <Insets left="10.0" top="-20.0" />
                </VBox.margin>
@@ -137,11 +137,20 @@
                <VBox.margin>
                   <Insets left="70.0" />
                </VBox.margin></Button>
+            <Label fx:id="deleteInstructLabel" prefHeight="73.0" prefWidth="136.0" text="Select the items you wish to delete using CTRL and your mouse, then press the button below." textAlignment="CENTER" visible="false" wrapText="true">
+               <VBox.margin>
+                  <Insets left="30.0" top="-300.0" />
+               </VBox.margin></Label>
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteButtonPressed" text="Delete" visible="false">
+               <VBox.margin>
+                  <Insets left="75.0" top="40.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </left>
    <bottom>
-      <HBox prefHeight="62.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
+      <HBox prefHeight="106.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
    </bottom>
    <right>
       <VBox prefHeight="408.0" prefWidth="140.0" BorderPane.alignment="CENTER">
@@ -159,12 +168,6 @@
                   <Insets left="8.0" top="40.0" />
                </VBox.margin>
             </TextField>
-            <Label fx:id="deleteLabel" prefHeight="73.0" prefWidth="136.0" text="Select the items you wish to delete, then press the button below." textAlignment="CENTER" visible="false" wrapText="true" />
-            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#onDeleteButtonPressed" text="Delete" visible="false">
-               <VBox.margin>
-                  <Insets left="45.0" top="40.0" />
-               </VBox.margin>
-            </Button>
          </children>
       </VBox>
    </right>
