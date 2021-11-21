@@ -7,6 +7,7 @@ package baseline;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import org.apache.commons.io.FilenameUtils;
 import org.hildan.fxgson.FxGson;
 import java.io.*;
 import java.lang.reflect.Type;
@@ -18,10 +19,41 @@ public class InventoryFileConverter {
     private static final String END = "</td>";
     private static final String START = "\t\t\t<td>";
 
-    public void exportHTML(File file, List<Item> currentInventory) {
+    public List<Item> importFile(File file) {
+        // Get the file extension from the file parameter.
+        String extension = FilenameUtils.getExtension(file.getName());
+        // Create a new list of items.
+        List<Item> items = new ArrayList<>();
+        // Depending on the extension of the file (HTML, JSON, TXT), called the corresponding import method
+        // and set the result to the list of items.
+        if (extension.equalsIgnoreCase("html")) {
+            items = importHTML(file);
+        } else if (extension.equalsIgnoreCase("json")) {
+            items = importJSON(file);
+        } else if (extension.equalsIgnoreCase("txt")) {
+            items = importTSV(file);
+        }
+        // Return the new list of items.
+        return items;
+    }
+
+    public void exportFile(File file, List<Item> currentInventory) {
+        // Get the file extension from the file parameter.
+        String extension = FilenameUtils.getExtension(file.getName());
+        // Depending on the extension of the file (HTML, JSON, TXT), called the corresponding export method.
+        if (extension.equalsIgnoreCase("html")) {
+            exportHTML(file, currentInventory);
+        } else if (extension.equalsIgnoreCase("json")) {
+            exportJSON(file, currentInventory);
+        } else if (extension.equalsIgnoreCase("txt")) {
+            exportTSV(file, currentInventory);
+        }
+    }
+
+    private void exportHTML(File file, List<Item> currentInventory) {
         // Create a PrintWriter inside a try/catch.
         try (PrintWriter writer = new PrintWriter(file)) {
-            // Get the String for the HTML file.
+            // Get the text for the HTML file.
             String fileText = createInventoryString(currentInventory);
             // Write the created string into the file.
             writer.write(fileText);
@@ -76,7 +108,7 @@ public class InventoryFileConverter {
         return fileText.toString();
     }
 
-    public void exportJSON(File file, List<Item> currentInventory) {
+    private void exportJSON(File file, List<Item> currentInventory) {
         // Create a GSON object.
         Gson gson = FxGson.create();
         // Within a try/catch create a PrintWriter at the file location.
@@ -90,7 +122,7 @@ public class InventoryFileConverter {
         }
     }
 
-    public void exportTSV(File file, List<Item> currentInventory) {
+    private void exportTSV(File file, List<Item> currentInventory) {
         // Create a StringBuilder.
         StringBuilder fileText = new StringBuilder();
         // Have the first line contain the names of the variables beneath them.
@@ -106,10 +138,10 @@ public class InventoryFileConverter {
             // If an error occurs print the stacktrace.
             e.printStackTrace();
         }
-        // Open the file and paste the stringbuilder in the file using a try/catch.
+        // Open the file and paste the StringBuilder in the file using a try/catch.
     }
 
-    public List<Item> importHTML(File file) {
+    private List<Item> importHTML(File file) {
         // Create a temporary list of items.
         List<Item> items = new ArrayList<>();
         // Create a String to hold the current line in the document, and a string array to hold the 3 strings
@@ -118,7 +150,7 @@ public class InventoryFileConverter {
         String[] itemParts = new String[3];
         // Set up a try/catch to read through the document.
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            // Loop through the file until the EOF is reached (Or null actually)
+            // Loop through the file until the EOF is reached.
             while ((currentLine = br.readLine()) != null) {
                 // When a line with <td> is found, insert the current and next 2 lines into the string array.
                 if (currentLine.contains("<td>")) {
@@ -127,7 +159,7 @@ public class InventoryFileConverter {
                     itemParts[1] = currentLine;
                     currentLine = br.readLine();
                     itemParts[2] = currentLine;
-                    // Call convertHTMLToItem on the string array and add the returned item to the list.
+                    // Call parseHTMLTable on the string array and add the returned item to the list.
                     items.add(parseHTMLTable(itemParts));
                 }
             }
@@ -135,7 +167,7 @@ public class InventoryFileConverter {
             // If an error occurs print the stacktrace.
             e.printStackTrace();
         }
-        // Return the temporary list.
+        // Return the list of items.
         return items;
     }
 
@@ -151,7 +183,7 @@ public class InventoryFileConverter {
         return new Item(itemParts[0],new BigDecimal(itemParts[1]), itemParts[2]);
     }
 
-    public List<Item> importJSON(File file) {
+    private List<Item> importJSON(File file) {
         // Create a new list of items.
         List<Item> items = new ArrayList<>();
         // Within a try/catch create a json reader at the file location.
@@ -159,8 +191,8 @@ public class InventoryFileConverter {
             // Create a Gson object and call fromJson using the collectionType.
             Gson gson = FxGson.create();
             Type collectionType = new TypeToken<List<Item>>(){}.getType();
-            items = gson.fromJson(reader, collectionType);;
-        } catch(IOException e) {
+            items = gson.fromJson(reader, collectionType);
+        } catch (IOException e) {
             // If an error occurs print the stacktrace.
             e.printStackTrace();
         }
@@ -168,7 +200,7 @@ public class InventoryFileConverter {
         return items;
     }
 
-    public List<Item> importTSV(File file) {
+    private List<Item> importTSV(File file) {
         // Create a list of items and a string for the current line of the BufferedReader.
         List<Item> items = new ArrayList<>();
         String currentLine;

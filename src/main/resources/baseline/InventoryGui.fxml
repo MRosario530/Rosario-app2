@@ -54,13 +54,9 @@
          <menus>
             <Menu mnemonicParsing="false" text="File">
                <items>
-                  <MenuItem fx:id="exportHTMLButton" mnemonicParsing="false" onAction="#onExportHTMLPressed" text="Export HTML File" />
-                  <MenuItem fx:id="exportJSONButton" mnemonicParsing="false" onAction="#onExportJSONPressed" text="Export JSON File" />
-                  <MenuItem fx:id="exportTSVButton" mnemonicParsing="false" onAction="#onExportTSVPressed" text="Export TSV File" />
+                  <MenuItem fx:id="importFileButton" mnemonicParsing="false" onAction="#onImportFilePressed" text="Import File" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="importHTMLButton" mnemonicParsing="false" onAction="#onImportHTMLPressed" text="Import HTML file" />
-                  <MenuItem fx:id="importJSONButton" mnemonicParsing="false" onAction="#onImportJSONPressed" text="Import JSON file" />
-                  <MenuItem fx:id="importTSVButton" mnemonicParsing="false" onAction="#onImportTSVPressed" text="Import TSV file" />
+                  <MenuItem fx:id="exportFileButton" mnemonicParsing="false" onAction="#onExportFilePressed" text="Export File" />
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Options">

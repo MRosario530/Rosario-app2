@@ -29,15 +29,10 @@ public class Item {
         return itemName.get();
     }
 
-    public SimpleStringProperty itemNameProperty() {
-        // Return the itemName property directly.
-        return itemName;
-    }
-
     public void setItemName(String itemName) {
         // If the string given is between 2 and 256 characters (inclusive), set the parameter itemName as the new
         // itemName instance variable.
-        if (itemName.length() >= 2 && itemName.length() <= 296) {
+        if (itemName.length() >= 2 && itemName.length() <= 256) {
             this.itemName = new SimpleStringProperty(itemName);
         }
     }
@@ -60,16 +55,11 @@ public class Item {
         return serialNumber.get();
     }
 
-    public SimpleStringProperty serialNumberProperty() {
-        // Return the serialNumber property directly.
-        return serialNumber;
-    }
-
     public void setSerialNumber(String serialNumber) {
-        // If the serial number given is not blank, set the parameter serialNumber
-        // as the new serialNumber instance variable. This is due to the error checking coming prior to this method
-        // being called.
-        if (serialNumber.length() != 0) {
+        // If the serial number given is not blank and of a valid regex expression, set the serialNumber parameter
+        // as the new serialNumber instance variable.
+        if (serialNumber.length() != 0 &&
+                serialNumber.matches("^[a-zA-Z]+-[A-Za-z0-9]{3}+-[A-Za-z0-9]{3}+-[A-Za-z0-9]{3}$")) {
             this.serialNumber = new SimpleStringProperty(serialNumber);
         }
     }
@@ -82,8 +72,8 @@ public class Item {
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
         // Otherwise return whether all components (itemName, value, and serialNumber) are equal to each other.
-        return itemName.equals(item.itemName) && itemValue.equals(item.itemValue) &&
-                serialNumber.equals(item.serialNumber);
+        return getItemName().equals(item.getItemName()) && getItemValue().equals(item.getItemValue()) &&
+                getSerialNumber().equals(item.getSerialNumber());
     }
 
     @Override
@@ -91,5 +81,4 @@ public class Item {
         // Returns the hash value of the item.
         return Objects.hash(itemName, itemValue, serialNumber);
     }
-
 }

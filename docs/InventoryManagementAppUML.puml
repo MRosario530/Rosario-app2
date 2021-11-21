@@ -1,0 +1,116 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class InventoryManagementApplication {
+    'methods
+    +main(String[]) {static}
+    +start(Stage)
+}
+
+class InventoryController {
+    'attributes
+    -inventory: Inventory
+    -visibleList: List<Item>
+    -currentMode: int
+    -itemNameLabel: Label
+    -serialNumberLabel: Label
+    -monetaryValueLabel: Label
+    -characterCountLabel: Label
+    -deleteButton: Button
+    -deleteInstructLabel: Label
+    -inputTitleLabel: Label
+    -inventoryTableview: TableView<Item>
+    -itemInputButton: Button
+    -nameColumn: TableColumn<Item, String>
+    -nameInputBox: TextArea
+    -searchBox: TextField
+    -serialInputBox: TextField
+    -serialNumColumn: TableColumn<Item, String>
+    -valueColumn: TableColumn<Item, BigDecimal>
+    -valueInputBox: TextField
+    'methods
+    -onAddTogglePressed(ActionEvent)
+    -onEditTogglePressed(ActionEvent)
+    -onDeleteTogglePressed(ActionEvent)
+    -onClearAllPressed(ActionEvent)
+    -onItemInputPressed(ActionEvent)
+    -onAddItemPressed()
+    -onEditItemPressed()
+    -onDeleteButtonPressed(ActionEvent)
+    -onSearchTyped(KeyEvent)
+    -onImportFilePressed(ActionEvent)
+    -onExportFilePressed(ActionEvent)
+    -clearInputBoxes()
+    -updateTable()
+    -toggleInputView(boolean)
+    +initialize(URL, ResourceBundle)
+}
+
+class Inventory {
+    'attributes
+    -currentInventory: List<Item>
+    'methods
+    +Inventory():
+    +getCurrentInventory(): List<Item>
+    +addItem(String, BigDecimal, String)
+    +editItem(Item, String, BigDecimal, String)
+    +deleteItems(List<Item>)
+    +clearList()
+    +searchList(String): List<Item>
+    +exportFile(File)
+    +importFile(File)
+}
+
+class InventoryFileConverter {
+    'attributes
+    -final END: String {static}
+    -final START: String {static}
+    'methods
+    +importFile(File): List<Item>
+    +exportFile(File, List<Item>)
+    -exportHTML(File, List<Item>)
+    -createInventoryString(List<Item>): String
+    -exportTSV(File, List<Item>)
+    -importHTML(File): List<Item>
+    -parseHTMLTable(String[]): Item
+    -importJSON(File): List<Item>
+    -importTSV(File): List<Item>
+    -parseTSVFile(String): Item
+}
+
+class InputVerifier {
+    'methods
+    +getAddingErrorString(String, String, String, List<Item>): String
+    +getEditingErrorString(String, String, String, List<Item>): String
+    -verifyItemName(String): boolean
+    -verifyValue(String): boolean
+    -verifySerialNum(String): boolean
+    -checkUniqueSerialNum(List<Item>, String): boolean
+}
+
+class Item {
+    'attributes
+    -itemName: SimpleStringProperty
+    -itemValue: BigDecimal
+    -serialNumber: SimpleStringProperty
+    'methods
+    +Item()
+    +Item(String, BigDecimal, String)
+    +getItemName(): String
+    +setItemName(String):
+    +getItemValue(): BigDecimal
+    +setItemValue(BigDecimal):
+    +getSerialNumber(): String
+    +setSerialNumber(String):
+    +equals(Object): boolean
+    +hashCode(): int
+}
+
+InventoryManagementApplication -- InventoryController
+InventoryController --o Inventory
+Inventory --o Item
+Inventory -- InventoryFileConverter
+InventoryFileConverter -- Item
+InventoryController -- InputVerifier
+InputVerifier -- Item
+@enduml

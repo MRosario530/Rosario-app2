@@ -5,82 +5,162 @@
 package baseline;
 
 import org.junit.jupiter.api.Test;
-
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InputVerifierTest {
-
+    // Note - InputVerifier utilizes many of the same private methods in its 2 public methods, which verify input for
+    // adding items and editing items. Since all the private methods are tested already though the several
+    // getAddingErrorString tests, I chose not to repeat the same tests for the getEditingErrorString tests.
     @Test
-    void testVerifyAllWhenValid() {
-        // Create an InputVerifier object.
-        // Use assertTrue on the method verifyAll with 3 valid inputs.
+    void testGetAddingErrorStringAllValid() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using all valid inputs and verify that the resulting string is blank.
+        String actualResult = verifier.getAddingErrorString("Test2","1", "A-123-456-789",
+                currentInventory);
+        assertEquals("", actualResult);
     }
 
     @Test
-    void testVerifyAllWhenInvalid() {
-        // Create an InputVerifier object.
-        // Use assertFalse on the method verifyAll with 2 valid inputs and 1 invalid input.
+    void testGetAddingErrorStringAllInvalid() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using all invalid inputs and verify that the resulting string has all 3
+        // errors present.
+        String actualResult = verifier.getAddingErrorString("a","a", "a",
+                currentInventory);
+        assertEquals("Invalid Item Name\nInvalid Value\nInvalid Serial Number\n", actualResult);
     }
 
     @Test
-    void testCheckDuplicateSerialNumWithADuplicate() {
-        // Create an InputVerifier object.
-        // Create a list of at least 3 items, each with their own serialNumbers.
-        // Use assertTrue on the method checkDuplicateSerialNum using a duplicate serial number.
+    void testGetAddingErrorStringInvalidNameOnly() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using an invalid name input and verify that the resulting string is has
+        // one error for "Invalid Item Name" present.
+        String actualResult = verifier.getAddingErrorString("a","1", "A-123-456-789",
+                currentInventory);
+        assertEquals("Invalid Item Name\n", actualResult);
     }
 
     @Test
-    void testCheckDuplicateSerialNumWithoutADuplicate() {
-        // Create an InputVerifier object.
-        // Create a list of at least 3 items, each with their own serialNumbers.
-        // Use assertFalse on the method checkDuplicateSerialNum using a unique serial number.
+    void testGetAddingErrorStringAllInvalidValueWordOnly() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using a word for the value and verify that the resulting string has one error
+        // for "Invalid Value" present.
+        String actualResult = verifier.getAddingErrorString("Test2","a", "A-123-456-789",
+                currentInventory);
+        assertEquals("Invalid Value\n", actualResult);
     }
 
     @Test
-    void testVerifySerialNumberWhenValid() {
-        // Create an InputVerifier object.
-        // Use assertTrue on the method verifySerialNumber with a valid serial number.
+    void testGetAddingErrorStringAllInvalidValueNumOnly() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using a negative for the value and verify that the resulting string has one
+        // error for "Invalid Value" present.
+        String actualResult = verifier.getAddingErrorString("Test2","-1", "A-123-456-789",
+                currentInventory);
+        assertEquals("Invalid Value\n", actualResult);
     }
 
     @Test
-    void testVerifySerialNumberWhenInvalid() {
-        // Create an InputVerifier object.
-        // Use assertFalse on the method verifySerialNumber with a serial number in an invalid format.
+    void testGetAddingErrorStringAllInvalidSerialNumber() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using an invalid serial number and verify that the resulting string has one
+        // error for "Invalid Serial Number" present.
+        String actualResult = verifier.getAddingErrorString("Test2","1", "SerialNum",
+                currentInventory);
+        assertEquals("Invalid Serial Number\n", actualResult);
     }
 
     @Test
-    void testVerifyValueWhenValid() {
-        // Create an InputVerifier object.
-        // Use assertTrue on the method verifyValue with a valid value above 0.
+    void testGetAddingErrorStringAllDuplicateSerialNumber() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getAddingErrorString using a duplicate serial number and verify that the resulting string has one
+        // error for "Duplicate Serial Number" present.
+        String actualResult = verifier.getAddingErrorString("Test2","1", "A-111-111-111",
+                currentInventory);
+        assertEquals("Duplicate Serial Number\n", actualResult);
     }
 
     @Test
-    void testVerifyValueWhenInvalidWord() {
-        // Create an InputVerifier object.
-        // Use assertFalse on the method verifyValue with a word.
+    void getEditingErrorStringAllValid() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getEditingErrorString using all valid inputs and verify that the resulting string is blank.
+        String actualResult = verifier.getEditingErrorString("Test2","1", "A-123-456-789",
+                currentInventory);
+        assertEquals("", actualResult);
     }
 
     @Test
-    void testVerifyValueWhenInvalidNumber() {
-        // Create an InputVerifier object.
-        // Use assertFalse on the method verifyValue with a negative value.
+    void getEditingErrorStringBlankName() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getEditingErrorString using a blank name and verify that the resulting string is still blank.
+        String actualResult = verifier.getEditingErrorString("","1", "A-123-456-789",
+                currentInventory);
+        assertEquals("", actualResult);
     }
 
     @Test
-    void testVerifyItemNameWhenValid() {
-        // Create an InputVerifier object.
-        // Use assertTrue on the method verifyItemName with a valid string between 2 and 256 characters.
+    void getEditingErrorStringBlankValue() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getEditingErrorString using a blank value and verify that the resulting string is still blank.
+        String actualResult = verifier.getEditingErrorString("Test2","", "A-123-456-789",
+                currentInventory);
+        assertEquals("", actualResult);
     }
 
     @Test
-    void testVerifyItemNameWhenInvalidShort() {
-        // Create an InputVerifier object.
-        // Use assertFalse on the method verifyItemName with an invalid string of length 1.
-    }
-
-    @Test
-    void testVerifyItemNameWhenInvalidLong() {
-        // Create an InputVerifier object.
-        // Use assertFalse on the method verifyItemName with an invalid string of length 257.
+    void getEditingErrorStringBlankSerialNumber() {
+        // Create a new verifier object.
+        InputVerifier verifier = new InputVerifier();
+        // Create a list of items with 1 item within it already.
+        List<Item> currentInventory = new ArrayList<>();
+        currentInventory.add(new Item("Test", new BigDecimal(1), "A-111-111-111"));
+        // Call the getEditingErrorString using a blank serial Number and verify that the resulting string is still
+        // blank.
+        String actualResult = verifier.getEditingErrorString("Test2","1", "",
+                currentInventory);
+        assertEquals("", actualResult);
     }
 }

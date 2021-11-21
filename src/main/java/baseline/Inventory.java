@@ -13,7 +13,7 @@ public class Inventory {
     private List<Item> currentInventory;
 
     public Inventory() {
-        // Create an Inventory object.
+        // Create an Inventory object and initialize the list of items.
         currentInventory = new ArrayList<>();
     }
 
@@ -63,45 +63,17 @@ public class Inventory {
         return searchList;
     }
 
-    public void exportHTML(File file) {
+    public void exportFile(File file) {
         // Create an InventoryFileConverter object.
         InventoryFileConverter convert = new InventoryFileConverter();
-        // Call the object's exportHTML method using the file and currentInventory list.
-        convert.exportHTML(file,currentInventory);
+        // Call the object's exportItem method using the file and currentInventory list.
+        convert.exportFile(file, currentInventory);
     }
 
-    public void exportJSON(File file) {
+    public void importFile(File file) {
         // Create an InventoryFileConverter object.
         InventoryFileConverter convert = new InventoryFileConverter();
-        // Call the object's exportJSON method using the file and currentInventory list.
-        convert.exportJSON(file,currentInventory);
-    }
-
-    public void exportTSV(File file) {
-        // Create an InventoryFileConverter object.
-        InventoryFileConverter convert = new InventoryFileConverter();
-        // Call the object's exportTSV method using the file and currentInventory list.
-        convert.exportTSV(file, currentInventory);
-    }
-
-    public void importHTML(File file) {
-        // Create an InventoryFileConverter object.
-        InventoryFileConverter convert = new InventoryFileConverter();
-        // Call the object's importHTML method using the file and set the result to the currentInventory list.
-        currentInventory = convert.importHTML(file);
-    }
-
-    public void importJSON(File file) {
-        // Create an InventoryFileConverter object.
-        InventoryFileConverter convert = new InventoryFileConverter();
-        // Call the object's importJSONToApp method using the file and set the result to the currentInventory list.
-        currentInventory = convert.importJSON(file);
-    }
-
-    public void importTSV(File file) {
-        // Create an InventoryFileConverter object.
-        InventoryFileConverter convert = new InventoryFileConverter();
-        // Call the object's importTSV method using the file and set the result to the currentInventory list.
-        currentInventory = convert.importTSV(file);
+        // Call the object's importItem method using the file.
+        currentInventory = convert.importFile(file);
     }
 }
