@@ -54,13 +54,13 @@
          <menus>
             <Menu mnemonicParsing="false" text="File">
                <items>
-                  <MenuItem fx:id="saveHTMLButton" mnemonicParsing="false" onAction="#onSaveHTMLPressed" text="Save as HTML" />
-                  <MenuItem fx:id="saveJSONButton" mnemonicParsing="false" onAction="#onSaveJSONPressed" text="Save as JSON" />
-                  <MenuItem fx:id="saveTSVButton" mnemonicParsing="false" onAction="#onSaveTSVPressed" text="Save as TSV" />
+                  <MenuItem fx:id="exportHTMLButton" mnemonicParsing="false" onAction="#onExportHTMLPressed" text="Export HTML File" />
+                  <MenuItem fx:id="exportJSONButton" mnemonicParsing="false" onAction="#onExportJSONPressed" text="Export JSON File" />
+                  <MenuItem fx:id="exportTSVButton" mnemonicParsing="false" onAction="#onExportTSVPressed" text="Export TSV File" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="uploadHTMLButton" mnemonicParsing="false" onAction="#onUploadHTMLPressed" text="Upload HTML file" />
-                  <MenuItem fx:id="uploadJSONButton" mnemonicParsing="false" onAction="#onUploadJSONPressed" text="Upload JSON file" />
-                  <MenuItem fx:id="uploadTSVButton" mnemonicParsing="false" onAction="#onUploadTSVPressed" text="Upload TSV file" />
+                  <MenuItem fx:id="importHTMLButton" mnemonicParsing="false" onAction="#onImportHTMLPressed" text="Import HTML file" />
+                  <MenuItem fx:id="importJSONButton" mnemonicParsing="false" onAction="#onImportJSONPressed" text="Import JSON file" />
+                  <MenuItem fx:id="importTSVButton" mnemonicParsing="false" onAction="#onImportTSVPressed" text="Import TSV file" />
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Options">
@@ -163,7 +163,7 @@
                   <Insets left="40.0" />
                </VBox.margin>
             </Label>
-            <TextField fx:id="searchBox" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" prefHeight="25.0" prefWidth="125.0" promptText="Enter Your Search">
+            <TextField fx:id="searchBox" maxWidth="-Infinity" minHeight="-Infinity" minWidth="100.0" onKeyTyped="#onSearchTyped" prefHeight="25.0" prefWidth="125.0" promptText="Enter Your Search">
                <VBox.margin>
                   <Insets left="8.0" top="40.0" />
                </VBox.margin>

@@ -5,7 +5,6 @@
 package baseline;
 
 import javafx.beans.property.SimpleStringProperty;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -36,9 +35,11 @@ public class Item {
     }
 
     public void setItemName(String itemName) {
-        // Assuming the string given is between 2 and 256 characters (inclusive), set the parameter itemName as the new
+        // If the string given is between 2 and 256 characters (inclusive), set the parameter itemName as the new
         // itemName instance variable.
-        this.itemName = new SimpleStringProperty(itemName);
+        if (itemName.length() >= 2 && itemName.length() <= 296) {
+            this.itemName = new SimpleStringProperty(itemName);
+        }
     }
 
     public BigDecimal getItemValue() {
@@ -47,9 +48,11 @@ public class Item {
     }
 
     public void setItemValue(BigDecimal itemValue) {
-        // Assuming the value given is a non-negative number, set the parameter value as the new
+        // If the value given is a non-negative number, set the parameter value as the new
         // value instance variable.
-        this.itemValue = itemValue;
+        if (itemValue.compareTo(BigDecimal.valueOf(0)) >= 0) {
+            this.itemValue = itemValue;
+        }
     }
 
     public String getSerialNumber() {
@@ -63,14 +66,12 @@ public class Item {
     }
 
     public void setSerialNumber(String serialNumber) {
-        // Assuming the serial number given is in the valid format "A-XXX-XXX-XXX", set the parameter serialNumber
-        // as the new serialNumber instance variable.
-        this.serialNumber = new SimpleStringProperty(serialNumber);
-    }
-
-    public String toString() {
-        // Return a string formatted as: serialNumber\titemName\tvalue.
-        return serialNumber + "\t" +itemName + "\t" + itemValue;
+        // If the serial number given is not blank, set the parameter serialNumber
+        // as the new serialNumber instance variable. This is due to the error checking coming prior to this method
+        // being called.
+        if (serialNumber.length() != 0) {
+            this.serialNumber = new SimpleStringProperty(serialNumber);
+        }
     }
 
     @Override

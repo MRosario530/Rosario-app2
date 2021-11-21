@@ -4,62 +4,195 @@
  */
 package baseline;
 
-import java.io.File;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import org.hildan.fxgson.FxGson;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryFileConverter {
-    public void saveAsHTML(File file, List<Item> currentInventory) {
-        // Create a string and start it with the html and table tags.
-        // Create 3 headers surrounded by the <th> tags.
-        // Create a for loop and add every component of every item, one line at a time with the appropriate <td> tags.
-        // Write the string to the file and save the result.
+    private static final String END = "</td>";
+    private static final String START = "\t\t\t<td>";
+
+    public void exportHTML(File file, List<Item> currentInventory) {
+        // Create a PrintWriter inside a try/catch.
+        try (PrintWriter writer = new PrintWriter(file)) {
+            // Get the String for the HTML file.
+            String fileText = createInventoryString(currentInventory);
+            // Write the created string into the file.
+            writer.write(fileText);
+        } catch (IOException e) {
+            // If an error occurs print the stacktrace.
+            e.printStackTrace();
+        }
     }
 
-    public void saveAsJSON(File file, List<Item> currentInventory) {
+    private String createInventoryString(List<Item> currentInventory) {
+        // Create a StringBuilder.
+        StringBuilder fileText = new StringBuilder();
+        // Start the StringBuilder with the doctype, html, header, title, and style information and tags.
+        fileText.append("""
+                <!DOCTYPE html> \s
+                <html> \s
+                <head> \s
+                \t<title>Inventory</title> \s
+                \t<style> \s
+                \ttable, th, td { \s
+                \t  border: 1px solid black; \s
+                \t  border-collapse: collapse; \s
+                \t} \s
+                \tth, td { \s
+                \t  padding: 10px; \s
+                \t} \s
+                \t</style> \s
+                </head> \s
+                """);
+        // Add the body, table header, and table tags.
+        fileText.append("""
+                <body> \s
+                \t<table> \s
+                \t\t<tr> \s
+                \t\t\t<th>Item Name</th> \s
+                \t\t\t<th>Monetary Value</th> \s
+                \t\t\t<th>Serial Number</th> \s
+                \t\t</tr> \s""");
+        // Loop through the list of items and add each to the StringBuilder with the appropriate tags.
+        for (Item item: currentInventory) {
+            fileText.append("\t\t<tr>\n");
+            fileText.append(START).append(item.getItemName()).append("</td>\n").append(START).append("$").
+                    append(item.getItemValue()).append("</td>\n\t\t\t<td>").append(item.getSerialNumber())
+                    .append("</td>\n\t\t</tr>\n");
+        }
+        // Add the closing table, body, and html tags.
+        fileText.append("""
+                \t</table> \s
+                </body> \s
+                </html> \s""");
+        // Return the string.
+        return fileText.toString();
+    }
+
+    public void exportJSON(File file, List<Item> currentInventory) {
         // Create a GSON object.
-        // Use the toJson method on the currentInventory list on the file destination.
+        Gson gson = FxGson.create();
+        // Within a try/catch create a PrintWriter at the file location.
+        try (PrintWriter writer = new PrintWriter(file)) {
+            // Use the toJson method on the currentInventory list to create a json string.
+            String jsonList = gson.toJson(currentInventory);
+            writer.write(jsonList);
+        } catch (IOException e) {
+            // If an error occurs print the stacktrace.
+            e.printStackTrace();
+        }
     }
 
-    public void saveAsTSV(File file, List<Item> currentInventory) {
-        // Create a stringbuilder.
-        // Have the first line include "Serial Number\tName\tValue\n"
-        // Loop through the list, adding the toString of each item to the stringbuilder
+    public void exportTSV(File file, List<Item> currentInventory) {
+        // Create a StringBuilder.
+        StringBuilder fileText = new StringBuilder();
+        // Have the first line contain the names of the variables beneath them.
+        fileText.append("Item Name\tMonetary Value\tSerial Number\n");
+        // Loop through the list, adding the components of each item to the StringBuilder.
+        for (Item item: currentInventory) {
+            fileText.append(item.getItemName()).append("\t").append("$").append(item.getItemValue()).append("\t")
+                    .append(item.getSerialNumber()).append("\n");
+        }
+        try (PrintWriter writer = new PrintWriter(file)) {
+            writer.write(fileText.toString());
+        } catch (IOException e) {
+            // If an error occurs print the stacktrace.
+            e.printStackTrace();
+        }
         // Open the file and paste the stringbuilder in the file using a try/catch.
     }
 
-    public List<Item> uploadHTML(File file) {
+    public List<Item> importHTML(File file) {
         // Create a temporary list of items.
-        // Set up a try/catch to loop through the document.
-        // Loop through the first few lines with no concern (doctype, html, etc)
-        // Proceed to loop through the 3 lines between each tablerow <tr> and create an object with the three
-        // components.
-        // If an error occurs print the stacktrace.
+        List<Item> items = new ArrayList<>();
+        // Create a String to hold the current line in the document, and a string array to hold the 3 strings
+        // that will create an item.
+        String currentLine;
+        String[] itemParts = new String[3];
+        // Set up a try/catch to read through the document.
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            // Loop through the file until the EOF is reached (Or null actually)
+            while ((currentLine = br.readLine()) != null) {
+                // When a line with <td> is found, insert the current and next 2 lines into the string array.
+                if (currentLine.contains("<td>")) {
+                    itemParts[0] = currentLine;
+                    currentLine = br.readLine();
+                    itemParts[1] = currentLine;
+                    currentLine = br.readLine();
+                    itemParts[2] = currentLine;
+                    // Call convertHTMLToItem on the string array and add the returned item to the list.
+                    items.add(parseHTMLTable(itemParts));
+                }
+            }
+        } catch (IOException e) {
+            // If an error occurs print the stacktrace.
+            e.printStackTrace();
+        }
         // Return the temporary list.
-        return null;
+        return items;
     }
 
-    public List<Item> uploadJSON(File file) {
-        // Create a new inventory.
+    private Item parseHTMLTable(String[] itemParts) {
+        // Remove the html components of each string to get the item name, value, and serial number.
+        itemParts[0] = itemParts[0].replace(START, "");
+        itemParts[0] = itemParts[0].replace(END, "");
+        itemParts[1] = itemParts[1].replace("\t\t\t<td>$", "");
+        itemParts[1] = itemParts[1].replace(END, "");
+        itemParts[2] = itemParts[2].replace(START, "");
+        itemParts[2] = itemParts[2].replace(END, "");
+        // Return a new item using the 3 strings from the array.
+        return new Item(itemParts[0],new BigDecimal(itemParts[1]), itemParts[2]);
+    }
+
+    public List<Item> importJSON(File file) {
+        // Create a new list of items.
+        List<Item> items = new ArrayList<>();
         // Within a try/catch create a json reader at the file location.
-        // Create a Gson object and call fromJson with the wrapper class Inventory.
-        // If an error occurs print the stacktrace.
-        // Return the list of items from the inventory.
-        return null;
+        try (JsonReader reader = new JsonReader(new FileReader(file))) {
+            // Create a Gson object and call fromJson using the collectionType.
+            Gson gson = FxGson.create();
+            Type collectionType = new TypeToken<List<Item>>(){}.getType();
+            items = gson.fromJson(reader, collectionType);;
+        } catch(IOException e) {
+            // If an error occurs print the stacktrace.
+            e.printStackTrace();
+        }
+        // Return the list of items.
+        return items;
     }
 
-    public List<Item> uploadTSV(File file) {
-        // Create a temporary list.
-        // Create a filereader within a try/catch.
-        // Pass the first line.
-        // Then loop until the end of file with the line being passed into the tsvParser method.
-            // Every item will get added to the temp list.
-        // Return the temporary list.
-        return null;
+    public List<Item> importTSV(File file) {
+        // Create a list of items and a string for the current line of the BufferedReader.
+        List<Item> items = new ArrayList<>();
+        String currentLine;
+        // Set up a try/catch to read through the document.
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            // Pass the first line because it only contains the titles of the columns.
+            currentLine = br.readLine();
+            // Then loop until the end of file with the line being passed into the parseTSVFile method.
+            while ((currentLine = br.readLine()) != null) {
+                items.add(parseTSVFile(currentLine));
+            }
+        } catch (IOException e) {
+            // If an error occurs print the stacktrace.
+            e.printStackTrace();
+        }
+        return items;
     }
 
-    private Item tsvParser(String itemText) {
+    private Item parseTSVFile(String itemText) {
         // From the string given split the string into an array of strings based on the \t character.
+        String[] itemParts = itemText.split("\t",3);
+        // Remove the $ from the value before converting it to a BigDecimal.
+        itemParts[1] = itemParts[1].replace("$","");
         // Create and return an item from the 3 strings within the array.
-        return null;
+        return new Item(itemParts[0], new BigDecimal(itemParts[1]), itemParts[2]);
     }
 }

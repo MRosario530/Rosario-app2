@@ -14,8 +14,9 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation ('com.google.code.gson:gson:2.8.9', 'org.hildan.fxgson:fx-gson:4.0.1')
 }
+
 
 javafx {
     version = "17"
@@ -27,4 +28,6 @@ test {
     useJUnitPlatform()
 }
 
-mainClassName = 'baseline.InventoryManagementApplication'
+application {
+    mainClassName = 'baseline.InventoryManagementApplication'
+}

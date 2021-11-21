@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Inventory {
-    private final List<Item> currentInventory;
+    private List<Item> currentInventory;
 
     public Inventory() {
         // Create an Inventory object.
@@ -32,11 +32,11 @@ public class Inventory {
     public void editItem(Item itemToEdit, String itemName, BigDecimal value, String serialNumber) {
         // Get the item given from the list.
         int itemIndex = currentInventory.indexOf(itemToEdit);
-        // If an input is blank, do not change the corresponding instance variable.
-
-        // If an input is invalid (itemName length not between 2 and 256, value < 0 or serialNumber in incorrect format)
-        // do not update anything.
-        // Otherwise update the non blank valid parameters in the given itemToEdit.
+        // Call the setters for the 3 variables. If an input is blank, the setter will not change anything. Otherwise,
+        // the variable is updated.
+        currentInventory.get(itemIndex).setItemName(itemName);
+        currentInventory.get(itemIndex).setItemValue(value);
+        currentInventory.get(itemIndex).setSerialNumber(serialNumber);
     }
 
     public void deleteItems(List<Item> selectedItems) {
@@ -53,36 +53,55 @@ public class Inventory {
         }
     }
 
-    public void saveAsHTML(File file) {
-        // Create an InventoryFileConverter object.
-        // Call the object's saveAsHTML method using the file and currentInventory list.
+    public List<Item> searchList(String searchString) {
+        List<Item> searchList = new ArrayList<>();
+        for (Item item : currentInventory) {
+            if (item.getItemName().contains(searchString) || item.getSerialNumber().contains(searchString)) {
+                searchList.add(item);
+            }
+        }
+        return searchList;
     }
 
-    public void saveAsJSON(File file) {
+    public void exportHTML(File file) {
         // Create an InventoryFileConverter object.
-        // Call the object's saveAsJSON method using the file and currentInventory list.
+        InventoryFileConverter convert = new InventoryFileConverter();
+        // Call the object's exportHTML method using the file and currentInventory list.
+        convert.exportHTML(file,currentInventory);
     }
 
-    public void saveAsTSV(File file, List<Item> currentInventory) {
+    public void exportJSON(File file) {
         // Create an InventoryFileConverter object.
-        // Call the object's saveAsTSV method using the file and currentInventory list.
+        InventoryFileConverter convert = new InventoryFileConverter();
+        // Call the object's exportJSON method using the file and currentInventory list.
+        convert.exportJSON(file,currentInventory);
     }
 
-    public void uploadHTML(File file) {
+    public void exportTSV(File file) {
         // Create an InventoryFileConverter object.
-        // Call the object's uploadHTML method using the file and set the result to a new list of items.
-        // If the length of the list isn't 0, overwrite the currentInventory with the new list.
+        InventoryFileConverter convert = new InventoryFileConverter();
+        // Call the object's exportTSV method using the file and currentInventory list.
+        convert.exportTSV(file, currentInventory);
     }
 
-    public void uploadJSON(File file) {
+    public void importHTML(File file) {
         // Create an InventoryFileConverter object.
-        // Call the object's uploadJSON method using the file and set the result to a new list of items.
-        // If the length of the list isn't 0, overwrite the currentInventory with the new list.
+        InventoryFileConverter convert = new InventoryFileConverter();
+        // Call the object's importHTML method using the file and set the result to the currentInventory list.
+        currentInventory = convert.importHTML(file);
     }
 
-    public void uploadTSV(File file) {
+    public void importJSON(File file) {
         // Create an InventoryFileConverter object.
-        // Call the object's uploadTSV method using the file and set the result to a new list of items.
-        // If the length of the list isn't 0, overwrite the currentInventory with the new list.
+        InventoryFileConverter convert = new InventoryFileConverter();
+        // Call the object's importJSONToApp method using the file and set the result to the currentInventory list.
+        currentInventory = convert.importJSON(file);
+    }
+
+    public void importTSV(File file) {
+        // Create an InventoryFileConverter object.
+        InventoryFileConverter convert = new InventoryFileConverter();
+        // Call the object's importTSV method using the file and set the result to the currentInventory list.
+        currentInventory = convert.importTSV(file);
     }
 }

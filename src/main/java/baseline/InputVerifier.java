@@ -9,25 +9,26 @@ import java.util.List;
 
 public class InputVerifier {
 
-    public boolean checkDuplicateSerialNum (List<Item> currentInventory, String serialNum){
+    public boolean checkUniqueSerialNum(List<Item> currentInventory, String serialNum){
         // Loop through the currentInventory.
         for (Item item: currentInventory) {
-            // If there is a serial number that matches the parameter's serial number, return true.
+            // If there is a serial number that matches the parameter's serial number, return false.
             if (item.getSerialNumber().equals(serialNum)) {
-                return true;
+                return false;
             }
         }
-        // Otherwise if no duplicate exists return false.
-        return false;
+        // Otherwise if no duplicate exists return true.
+        return true;
     }
 
     public boolean verifySerialNum(String serialNum) {
-        // Return the comparison between the serialNumber and an appropriate regex for A-XXX-XXX-XXX.
+        // Return the comparison between the serialNumber and an appropriate regex for A-XXX-XXX-XXX. False if it
+        // doesn't match, true if it does.
         return serialNum.matches("^[a-zA-Z]+-[A-Za-z0-9]{3}+-[A-Za-z0-9]{3}+-[A-Za-z0-9]{3}$");
     }
 
     public boolean verifyValue(String value) {
-        // Attempt to parse the value to a bigdecimal.
+        // Attempt to parse the value to a BigDecimal.
         BigDecimal val;
         try{
             val = new BigDecimal(value);
@@ -47,30 +48,44 @@ public class InputVerifier {
     public String getInvalidAddString(String itemName, String value, String serialNum,
                                       List<Item> currentInventory){
         StringBuilder invalidInputString = new StringBuilder("");
-        if(verifyItemName(itemName)) {
-            invalidInputString.append("Item Name\n");
+        // If the item name was invalid, add item name to the string of invalid components
+        if (verifyItemName(itemName)) {
+            invalidInputString.append("Invalid Item Name\n");
         }
-        if(!verifyValue(value)) {
-            invalidInputString.append("Value\n");
+        // If the value was invalid, add value to the string of invalid components.
+        if (!verifyValue(value)) {
+            invalidInputString.append("Invalid Value\n");
         }
-        if(!verifySerialNum(serialNum) || checkDuplicateSerialNum(currentInventory,serialNum)) {
-            invalidInputString.append("Serial Number\n");
+        // If the serial number was invalid, either in input or by duplicate, add serial number to the string of
+        // invalid opponents.
+        if (!verifySerialNum(serialNum)) {
+            invalidInputString.append("Invalid Serial Number\n");
+        } else if (!checkUniqueSerialNum(currentInventory,serialNum)) {
+            invalidInputString.append("Duplicate Serial Number\n");
         }
+        // Return the resulting string.
         return invalidInputString.toString();
     }
 
     public String getInvalidEditString(String itemName, String value, String serialNum,
                                       List<Item> currentInventory){
         StringBuilder invalidInputString = new StringBuilder("");
-        if (verifyItemName(itemName)) {
-            invalidInputString.append("Item Name\n");
+        // If the item name was invalid and not blank, add item name to the string of invalid components
+        if (verifyItemName(itemName) && itemName.length() != 0) {
+            invalidInputString.append("Invalid Item Name\n");
         }
-        if (!verifyValue(value)) {
-            invalidInputString.append("Value\n");
+        // If the value was invalid and not blank, add value to the string of invalid components.
+        if (!verifyValue(value) && !value.isBlank()) {
+            invalidInputString.append("Invalid Value\n");
         }
-        if (!verifySerialNum(serialNum) || checkDuplicateSerialNum(currentInventory,serialNum)) {
-            invalidInputString.append("Serial Number\n");
+        // If the serial number was invalid, either in input or by duplicate, and not blank, add serial number
+        // to the string of invalid opponents.
+        if (!verifySerialNum(serialNum) && !serialNum.isBlank()) {
+            invalidInputString.append("Invalid Serial Number\n");
+        } else if (!checkUniqueSerialNum(currentInventory,serialNum)) {
+            invalidInputString.append("Duplicate Serial Number\n");
         }
+        // Return the resulting string.
         return invalidInputString.toString();
     }
 
