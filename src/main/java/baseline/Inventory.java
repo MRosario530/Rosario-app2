@@ -54,12 +54,16 @@ public class Inventory {
     }
 
     public List<Item> searchList(String searchString) {
+        // Create a new list of items.
         List<Item> searchList = new ArrayList<>();
+        // For every item in the currentInventory, if the item name or serial number contains the search string add
+        // that item to the search list.
         for (Item item : currentInventory) {
             if (item.getItemName().contains(searchString) || item.getSerialNumber().contains(searchString)) {
                 searchList.add(item);
             }
         }
+        // Return the search list.
         return searchList;
     }
 
