@@ -20,6 +20,7 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class InventoryController implements Initializable {
@@ -138,12 +139,18 @@ public class InventoryController implements Initializable {
 
     @FXML
     private void onClearAllPressed(ActionEvent event) {
-        // Call the inventory's clearList method.
-        inventory.clearList();
-        // Update the tableview.
-        visibleList = inventory.getCurrentInventory();
-        inventoryTableview.setItems(FXCollections.observableArrayList(visibleList));
-        inventoryTableview.refresh();
+        // Create an alert to confirm if the user wants to clear all items.
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Are you sure you would like to clear the entire list?");
+        Optional<ButtonType> result = alert.showAndWait();
+        // If they press okay, clear the inventory.
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Call the inventory's clearList method.
+            inventory.clearList();
+            // Update the tableview.
+            updateTable();
+        }
     }
 
     @FXML
@@ -197,6 +204,9 @@ public class InventoryController implements Initializable {
         String value = valueInputBox.getText();
         String serialNum = serialInputBox.getText();
         Item itemToDelete = inventoryTableview.getSelectionModel().getSelectedItem();
+        if (itemToDelete == null) {
+            return;
+        }
         // Use the verifier's getInvalidEditString method to get a string with all errors involved with the input.
         String result = verifier.getEditingErrorString(itemName, value, serialNum, inventory.getCurrentInventory());
         // If the length was 0, no input errors were made.
@@ -229,10 +239,18 @@ public class InventoryController implements Initializable {
     private void onDeleteButtonPressed(ActionEvent event) {
         // Get the currently selected items from the list.
         List<Item> itemsToDelete = inventoryTableview.getSelectionModel().getSelectedItems();
-        // Call the inventory's deleteItems method on the list of selected items.
-        inventory.deleteItems(itemsToDelete);
-        // Update the tableview.
-        updateTable();
+        // Create an alert to confirm if the user wants to delete the selected items.
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Are you sure you would like to delete the selected items?");
+        Optional<ButtonType> result = alert.showAndWait();
+        // If they press okay, delete the selected items from the inventory.
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Call the inventory's deleteItems method on the list of selected items.
+            inventory.deleteItems(itemsToDelete);
+            // Update the tableview.
+            updateTable();
+        }
     }
 
     @FXML

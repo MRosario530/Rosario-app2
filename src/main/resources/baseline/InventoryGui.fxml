@@ -54,9 +54,9 @@
          <menus>
             <Menu mnemonicParsing="false" text="File">
                <items>
-                  <MenuItem fx:id="importFileButton" mnemonicParsing="false" onAction="#onImportFilePressed" text="Import File" />
+                  <MenuItem fx:id="importFileButton" mnemonicParsing="false" onAction="#onImportFilePressed" text="Open..." />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="exportFileButton" mnemonicParsing="false" onAction="#onExportFilePressed" text="Export File" />
+                  <MenuItem fx:id="exportFileButton" mnemonicParsing="false" onAction="#onExportFilePressed" text="Save as..." />
                </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Options">
